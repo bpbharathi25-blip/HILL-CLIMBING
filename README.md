@@ -1,115 +1,268 @@
-<h1>ExpNo 5 : Implement Simple Hill Climbing Algorithm</h1> 
-<h3>Name: Persys freeda J          </h3>
-<h3>Register Number: 212224060185           </h3>
+ <h1>ExpNo 4 : Implement A* search algorithm for a Graph</h1> 
+<h3>Name: BHARATHI P </h3>
+<h3>Register Number: 212224060043 </h3>
 <H3>Aim:</H3>
-<p>Implement Simple Hill Climbing Algorithm and Generate a String by Mutating a Single Character at each iteration </p>
-<h2> Theory: </h2>
-<p>Hill climbing is a variant of Generate and test in which feedback from test procedure is used to help the generator decide which direction to move in search space.
-Feedback is provided in terms of heuristic function
-</p>
+<p>To ImplementA * Search algorithm for a Graph using Python 3.</p>
+<H3>Algorithm:</H3>
 
+``````
+// A* Search Algorithm
+1.  Initialize the open list
+2.  Initialize the closed list
+    put the starting node on the open 
+    list (you can leave its f at zero)
 
-<h2>Algorithm:</h2>
-<p>
-<ol>
- <li> Evaluate the initial state.If it is a goal state then return it and quit. Otherwise, continue with initial state as current state.</li> 
-<li>Loop until a solution is found or there are no new operators left to be applied in current state:
-<ul><li>Select an operator that has not yet been applied to the current state and apply it to produce a new state</li>
-<li>Evaluate the new state:
-  <ul>
-<li>if it is a goal state, then return it and quit</li>
-<li>if it is not a goal state but better than current state then make new state as current state</li>
-<li>if it is not better than current state then continue in the loop</li>
-    </ul>
-</li>
-</ul>
-</li>
-</ol>
+3.  while the open list is not empty
+    a) find the node with the least f on 
+       the open list, call it "q"
 
-</p>
+    b) pop q off the open list
+  
+    c) generate q's 8 successors and set their 
+       parents to q
+   
+    d) for each successor
+        i) if successor is the goal, stop search
+        
+        ii) else, compute both g and h for successor
+          successor.g = q.g + distance between 
+                              successor and q
+          successor.h = distance from goal to 
+          successor (This can be done using many 
+          ways, we will discuss three heuristics- 
+          Manhattan, Diagonal and Euclidean 
+          Heuristics)
+          
+          successor.f = successor.g + successor.h
+
+        iii) if a node with the same position as 
+            successor is in the OPEN list which has a 
+           lower f than successor, skip this successor
+
+        iV) if a node with the same position as 
+            successor  is in the CLOSED list which has
+            a lower f than successor, skip this successor
+            otherwise, add  the node to the open list
+     end (for loop)
+  
+    e) push q on the closed list
+    end (while loop)
+
+``````
+
 <hr>
-<h3> Steps Applied:</h3>
-<h3>Step-1</h3>
-<p> Generate Random String of the length equal to the given String</p>
-<h3>Step-2</h3>
-<p>Mutate the randomized string each character at a time</p>
-<h3>Step-3</h3>
-<p> Evaluate the fitness function or Heuristic Function</p>
-<h3>Step-4:</h3>
-<p> Lopp Step -2 and Step-3  until we achieve the score to be Zero to achieve Global Minima.</p>
+<h2>Sample Graph I</h2>
+<hr>
+
+![image](https://github.com/natsaravanan/19AI405FUNDAMENTALSOFARTIFICIALINTELLIGENCE/assets/87870499/b1377c3f-011a-4c0f-a843-516842ae056a)
 
 <hr>
-<h2>Sample Input and Output</h2>
-<h2>Sample String:</h2> Artificial Intelligence
+<h2>Sample Input</h2>
+<hr>
+10 14 <br>
+A B 6 <br>
+A F 3 <br>
+B D 2 <br>
+B C 3 <br>
+C D 1 <br>
+C E 5 <br>
+D E 8 <br>
+E I 5 <br>
+E J 5 <br>
+F G 1 <br>
+G I 3 <br>
+I J 3 <br>
+F H 7 <br>
+I H 2 <br>
+A 10 <br>
+B 8 <br>
+C 5 <br>
+D 7 <br>
+E 3 <br>
+F 6 <br>
+G 5 <br>
+H 3 <br>
+I 1 <br>
+J 0 <br>
+<hr>
+<h2>Program</h2>
 
-# Hill Climbing Algorithm Implementation in Python
+```
+from collections import defaultdict
+H_dist ={}
+def aStarAlgo(start_node, stop_node):
+    open_set = set(start_node)
+    closed_set = set()
+    g = {}  
+    parents = {}   
+    g[start_node] = 0
+    parents[start_node] = start_node
+    while len(open_set) > 0:
+        n = None
+        for v in open_set:
+            if n == None or g[v] + heuristic(v) < g[n] + heuristic(n):
+                n = v
+        if n == stop_node or Graph_nodes[n] == None:
+            pass
+        else:
+            for (m, weight) in get_neighbors(n):
+                if m not in open_set and m not in closed_set:
+                    open_set.add(m)
+                    parents[m] = n
+                    g[m] = g[n] + weight
+                else:
+                    if g[m] > g[n] + weight:
+                        g[m] = g[n] + weight
+                        parents[m] = n
+                        if m in closed_set:
+                            closed_set.remove(m)
+                            open_set.add(m)
+        if n == None:
+            print("Path does not exist!")
+            return None
+        if n == stop_node:
+            path = []
+            while parents[n] != n:
+                path.append(n)
+                n = parents[n]
+            path.append(start_node)
+            path.reverse()
+            print('Path found: {}'.format(path))
+            return path
+        open_set.remove(n)
+        closed_set.add(n)
+    print('Path does not exist!')
+    return None
+def get_neighbors(v):
+    if v in Graph_nodes:
+        return Graph_nodes[v]
+    else:
+        return None
+def heuristic(n):
+    return H_dist[n]
+graph = defaultdict(list)
+n,e = map(int,input().split())
+for i in range(e):
+    u,v,cost = map(str,input().split())
+    t=(v,int(cost))
+    graph[u].append(t)
+    t1=(u,int(cost))
+    graph[v].append(t1)
+for i in range(n):
+    node,h=map(str,input().split())
+    H_dist[node]=int(h)
+Graph_nodes=graph
+start=input()
+goal=input()
+aStarAlgo(start, goal)
 
-import random
-import string
 
-# Function to calculate fitness (Heuristic function)
-def fitness_function(target, test_string):
-    score = 0
-    for i in range(len(target)):
-        score += abs(ord(target[i]) - ord(test_string[i]))
-    return score
-
-# Function to generate a random string of same length as target
-def random_string(length):
-    letters = string.ascii_letters + string.punctuation + ' '
-    return ''.join(random.choice(letters) for _ in range(length))
-
-# Function to mutate one character in the string
-def mutate(parent):
-    index = random.randint(0, len(parent) - 1)
-    letters = string.ascii_letters + string.punctuation + ' '
-    new_char = random.choice(letters)
-    child = list(parent)
-    child[index] = new_char
-    return ''.join(child)
-
-# Hill Climbing algorithm
-def hill_climb(target):
-    current_solution = random_string(len(target))
-    current_score = fitness_function(target, current_solution)
-    print("Initial Score:", current_score, "Initial Solution:", current_solution)
-
-    while True:
-        new_solution = mutate(current_solution)
-        new_score = fitness_function(target, new_solution)
-
-        print("Score:", new_score, "Solution:", new_solution)
-
-        if new_score == 0:
-            print("\nResult : Solution Found =", new_solution)
-            break
-
-        if new_score < current_score:
-            current_solution = new_solution
-            current_score = new_score
-
-# ---------------- MAIN PROGRAM ----------------
-target = input("Enter the target string: ")
-hill_climb(target)
+```
+<h2>Sample Output</h2>
+<hr>
+Path found: ['A', 'F', 'G', 'I', 'J']
 
 
-<h2>Output:</h2>
-Score: 643  Solution :  8RzF:oG ]%;CPORRMe!zGvk<br>
-Score: 609  Solution :  8RzF:oG ]%;CPqRRMe!zGvk<br>
-Score: 604  Solution :  8RzF:oG ]%;CPqRRMe!zGqk<br>
-Score: 594  Solution :  8RzF:oG ]%;CPqRRWe!zGqk<br>
-Score: 551  Solution :  8RzF:oGK]%;CPqRRWe!zGqk<br>
-Score: 551  Solution :  8RzF:oGK]%;CPqRRWe!zGqk<br>
-Score: 551  Solution :  8RzF:oGK]%;CPqRRWe!zGqk<br>
-Score: 551  Solution :  8RzF:oGK]%;CPqRRWe!zGqk<br>
-Score: 551  Solution :  8RzF:oGK]%;CPqRRWe!zGqk<br>
-....................................................<br>
-..................................................<br>
-................................................<br>
-Score: 1  Solution :  Artificial Intelligencf<br>
-Score: 1  Solution :  Artificial Intelligencf<br>
-Score: 1  Solution :  Artificial Intelligencf<br>
-Score: 1  Solution :  Artificial Intelligencf<br>
-Score: 0  Solution :  Artificial Intelligence<br>
-result 
-thus the output has been executed
+<hr>
+<h2>Sample Graph II</h2>
+<hr>
+
+![image](https://github.com/natsaravanan/19AI405FUNDAMENTALSOFARTIFICIALINTELLIGENCE/assets/87870499/acbb09cb-ed39-48e5-a59b-2f8d61b978a3)
+
+
+<hr>
+<h2>Sample Input</h2>
+<hr>
+6 6 <br>
+A B 2 <br>
+B C 1 <br>
+A E 3 <br>
+B G 9 <br>
+E D 6 <br>
+D G 1 <br>
+A 11 <br>
+B 6 <br>
+C 99 <br>
+E 7 <br>
+D 1 <br>
+G 0 <br>
+<hr>
+<h2>Program</h2>
+
+```
+from collections import defaultdict
+H_dist ={}
+def aStarAlgo(start_node, stop_node):
+    open_set = set(start_node)
+    closed_set = set()
+    g = {}  
+    parents = {}   
+    g[start_node] = 0
+    parents[start_node] = start_node
+    while len(open_set) > 0:
+        n = None
+        for v in open_set:
+            if n == None or g[v] + heuristic(v) < g[n] + heuristic(n):
+                n = v
+        if n == stop_node or Graph_nodes[n] == None:
+            pass
+        else:
+            for (m, weight) in get_neighbors(n):
+                if m not in open_set and m not in closed_set:
+                    open_set.add(m)
+                    parents[m] = n
+                    g[m] = g[n] + weight
+                else:
+                    if g[m] > g[n] + weight:
+                        g[m] = g[n] + weight
+                        parents[m] = n
+                        if m in closed_set:
+                            closed_set.remove(m)
+                            open_set.add(m)
+        if n == None:
+            print("Path does not exist!")
+            return None
+        if n == stop_node:
+            path = []
+            while parents[n] != n:
+                path.append(n)
+                n = parents[n]
+            path.append(start_node)
+            path.reverse()
+            print('Path found: {}'.format(path))
+            return path
+        open_set.remove(n)
+        closed_set.add(n)
+    print('Path does not exist!')
+    return None
+def get_neighbors(v):
+    if v in Graph_nodes:
+        return Graph_nodes[v]
+    else:
+        return None
+def heuristic(n):
+    return H_dist[n]
+graph = defaultdict(list)
+n,e = map(int,input().split())
+for i in range(e):
+    u,v,cost = map(str,input().split())
+    t=(v,int(cost))
+    graph[u].append(t)
+    t1=(u,int(cost))
+    graph[v].append(t1)
+for i in range(n):
+    node,h=map(str,input().split())
+    H_dist[node]=int(h)
+Graph_nodes=graph
+start=input()
+goal=input()
+aStarAlgo(start, goal)
+
+```
+<h2>Sample Output</h2>
+<hr>
+Path found: ['A', 'E', 'D', 'G']
+
+# Result
+
+The program is executed successfully
